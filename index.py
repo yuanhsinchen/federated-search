@@ -47,14 +47,15 @@ class result:
 
   def GET(self, name=None):
     i = web.input(query=None)
-    s = "http://citeseerx.ist.psu.edu/search?q=" + i.query + "&submit=Search&sort=rlv&t=doc&feed=rss"
+    query = i.query.replace(" ", "+")
+    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc&feed=rss"
     response = urllib2.urlopen(s)
     rss = response.read()
     citeseers_rss = feedparser.parse(s)
     #for entr in citeseers_rss.entries:
       #print entr.title
 
-    s = "http://citeseerx.ist.psu.edu/search?q=" + i.query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
+    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
     #html = urllib2.urlopen(s).read()
     #r = soup.findAll("div", { "class" : "result" })
     #rrender = Render(s)
