@@ -1,0 +1,32 @@
+$def with (rss, html)
+<!DOCTYPE html>
+<html>
+<body>
+
+<div id="container">
+
+<div id="header">
+<h1 style="margin-bottom:0;">Search Result</h1></div>
+<!--<h2 style="width:600">Keyword</h2>-->
+<!--<h2 style="width:600">Author</h2></div>-->
+<div id="subtitle1"><h2>Keyword</h2><div>
+<!--<div id="subtitle2"><h2>Author</h2><div>-->
+<div id="Keyword" style="height:200px;width:600px;float:left;">
+$for entr in rss.entries:
+  <div><h4>$entr.title</h4>
+       <!--$entr.link<br>-->
+       $entr.description<br></div>
+</div>
+
+<div id="Author" style="height:200px;width:600px;float:left;">
+$for e in html:
+  <div><h4>$e.text</h4>
+     <!--$entr.link<br>-->
+     <br></div>
+
+</div>
+
+</div>
+ 
+</body>
+</html>
