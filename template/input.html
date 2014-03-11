@@ -1,16 +1,23 @@
 $def with (title)
 <!DOCTYPE html>
 <html>
+<head>
+<link rel="stylesheet" type="text/css" href="/static/inputcss.css" />
+</head>
+
 <body>
 
-<div id="image">
+<div>
+
+<div id="query_form">
 <img src="/static/citeseer.png" />
+<form name="input" method="get" action="/result">
+<input type="text" name="query" value="">
+<input type="submit" value="Search">
+</form>
 </div>
 
-<form name="input" method="get" action="/result">
-<input type="text" name="query" value=""><br>
-<input type="submit" value="Search">
-</form> 
+</div>
 
 </body>
 </html>
