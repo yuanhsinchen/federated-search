@@ -7,8 +7,21 @@ margin-left: 475px;
 
 .content_div
 {
+width: 850px;
 margin-left: 150px;
 margin-right: 150px;
+}
+
+.image_div
+{
+width: 400px;
+height: 100px;
+float: left;
+}
+
+.form_div
+{
+float:left;
 }
 
 .bottom

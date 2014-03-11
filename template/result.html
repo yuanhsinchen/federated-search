@@ -8,11 +8,20 @@ $def with (rss, html)
 <body>
 
 <div class="content_div">
+
 <div>
+<div class="image_div">
 <img src="/static/citeseer.png" />
 </div>
-<div id="header">
-<h1 class="bottom">Search Result</h1></div>
+<div class="image_div">
+<form name="input" method="get" action="/result">
+<input type="text" name="query" value="">
+<input type="submit" value="Search">
+</form>
+</div>
+<div>
+<h1 class="bottom">Search Result</h1> </div>
+</div>
 
 <div id="subtitle">
 <div class="doc_subtitle_div"><h2>Keyword</h2></div>
