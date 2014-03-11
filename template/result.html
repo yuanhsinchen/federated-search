@@ -7,29 +7,30 @@ $def with (rss, html)
 
 <body>
 
-<div id="container">
-
+<div class="content_div">
+<div>
+<img src="/static/citeseer.png" />
+</div>
 <div id="header">
 <h1 class="bottom">Search Result</h1></div>
 
 <div id="subtitle">
-<div class="subtitle_div"><h2>Keyword</h2></div>
-<div class="subtitle_div"><h2>Author</h2></div>
+<div class="doc_subtitle_div"><h2>Keyword</h2></div>
+<div class="aut_subtitle_div"><h2>Author</h2></div>
 </div>
 
-<div class="result_div">
+<div class="doc_result_div">
 $for entr in rss.entries:
-  <div><h4>$entr.title</h4>
+  <div class="text_div"><h4>$entr.title</h4>
        <!--$entr.link<br>-->
        $entr.description<br></div>
 </div>
 
-<div class="result_div">
+<div class="aut_result_div">
 $for e in html:
-  <div><h4>$e.text</h4>
+  <div class="text_div"><h4>$e.text</h4>
      <!--$entr.link<br>-->
      <br></div>
-
 </div>
 
 </div>

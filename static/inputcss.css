@@ -5,20 +5,42 @@ margin-top: 150px;
 margin-left: 475px;
 }
 
+.content_div
+{
+margin-left: 150px;
+margin-right: 150px;
+}
+
 .bottom
 {
 margin-bottom: 0;
 }
 
-.subtitle_div
+.doc_subtitle_div
 {
-width: 600px;
+width: 650px;
 float: left;
 }
 
-.result_div
+.aut_subtitle_div
 {
-height: 200px;
-width: 600px;
+width: 200px;
 float: left;
+}
+
+.doc_result_div
+{
+width: 650px;
+float: left;
+}
+
+.aut_result_div
+{
+width: 200px;
+float: left;
+}
+
+.text_div
+{
+padding: 15px;
 }
