@@ -4,3 +4,21 @@ position: relative;
 margin-top: 150px;
 margin-left: 475px;
 }
+
+.bottom
+{
+margin-bottom: 0;
+}
+
+.subtitle_div
+{
+width: 600px;
+float: left;
+}
+
+.result_div
+{
+height: 200px;
+width: 600px;
+float: left;
+}

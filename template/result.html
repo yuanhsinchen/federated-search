@@ -1,26 +1,30 @@
 $def with (rss, html)
 <!DOCTYPE html>
 <html>
+<head>
+<link rel="stylesheet" type="text/css" href="/static/inputcss.css" />
+</head>
+
 <body>
 
 <div id="container">
 
 <div id="header">
-<h1 style="margin-bottom:0;">Search Result</h1></div>
+<h1 class="bottom">Search Result</h1></div>
 
 <div id="subtitle">
-<div id="subtitle1" style="width:600px;float:left;"><h2>Keyword</h2></div>
-<div id="subtitle2" style="width:600px;float:left;"><h2>Author</h2></div>
+<div class="subtitle_div"><h2>Keyword</h2></div>
+<div class="subtitle_div"><h2>Author</h2></div>
 </div>
 
-<div id="Keyword" style="height:200px;width:600px;float:left;">
+<div class="result_div">
 $for entr in rss.entries:
   <div><h4>$entr.title</h4>
        <!--$entr.link<br>-->
        $entr.description<br></div>
 </div>
 
-<div id="Author" style="height:200px;width:600px;float:left;">
+<div class="result_div">
 $for e in html:
   <div><h4>$e.text</h4>
      <!--$entr.link<br>-->
