@@ -12,7 +12,7 @@ margin-left: 150px;
 margin-right: 150px;
 }
 
-.image_div
+.image_div, .form_div
 {
 width: 400px;
 height: 100px;
@@ -21,7 +21,7 @@ float: left;
 
 .form_div
 {
-float:left;
+margin-top: 20px;
 }
 
 .bottom
@@ -56,4 +56,11 @@ float: left;
 .text_div
 {
 padding: 15px;
+}
+
+.result_div
+{
+clear: both;
+background-color: #ececec;
+padding: 4px;
 }

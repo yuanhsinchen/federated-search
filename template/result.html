@@ -9,25 +9,26 @@ $def with (rss, html)
 
 <div class="content_div">
 
-<div>
 <div class="image_div">
 <img src="/static/citeseer.png" />
 </div>
-<div class="image_div">
+
+<div class="form_div">
 <form name="input" method="get" action="/result">
 <input type="text" name="query" value="">
 <input type="submit" value="Search">
 </form>
 </div>
-<div>
+
+<div class="result_div">Results</div>
+<!--<div>
 <h1 class="bottom">Search Result</h1> </div>
 </div>
 
 <div id="subtitle">
 <div class="doc_subtitle_div"><h2>Keyword</h2></div>
 <div class="aut_subtitle_div"><h2>Author</h2></div>
-</div>
-
+</div>-->
 <div class="doc_result_div">
 $for entr in rss.entries:
   <div class="text_div"><h4><a href=$entr.link>$entr.title</a></h4>
