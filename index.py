@@ -39,13 +39,16 @@ class result:
 
     #query to CiteSeerx
     s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc&feed=rss"
-    citeseers_rss = feedparser.parse(s)
+    rss = feedparser.parse(s)
+    for entr in rss.entries:
+        entr.title = entr.title.replace("<em>", " ")
+        entr.title = entr.title.replace("</em>", " ")
 
     #query to CiteSeerx Author
     s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
     doc = lxml.html.parse(s)
     r = doc.xpath('//div/h3/a')
-    return self.render.result(citeseers_rss, r)
+    return self.render.result(rss, r)
 
 if __name__ == "__main__":
   app.run()
