@@ -48,8 +48,15 @@ class result:
     #query to CiteSeerx Author
     s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
     doc = lxml.html.parse(s)
-    r = doc.xpath('//div/h3/a')
-    return self.render.result(rss, r)
+    href = doc.xpath("//div[@class='result']/h3/a/@href")
+    author = doc.xpath("//div[@class='result']/h3/a/text()")
+    vari = doc.xpath("//div[@class='result']//table[@class='authInfo']/tr[contains(.,'Variations')]/td[2]/text()")
+    affi = doc.xpath("//div[@class='result']//table[@class='authInfo']/tr[contains(.,'Affiliations')]/td[2]/text()")
+    paper = doc.xpath("//div[@class='result']//table[@class='authInfo']/tr[contains(.,'Papers')]/td[2]/text()")
+    page = doc.xpath("//div[@class='result']//table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href")
+    print vari
+    html = (author, href, paper)
+    return self.render.result(rss, html)
 
 class css:
     def GET(self): raise web.seeother("/static/inputcss.css")
