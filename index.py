@@ -15,6 +15,7 @@ import sys
 urls = (
 	'/', 'index',
 	'/result', 'result',
+        '/static/inputcss.css', 'css',
 	)
 
 app = web.application(urls, globals())
@@ -50,5 +51,7 @@ class result:
     r = doc.xpath('//div/h3/a')
     return self.render.result(rss, r)
 
+class css:
+    def GET(self): raise web.seeother("/static/inputcss.css")
 if __name__ == "__main__":
   app.run()

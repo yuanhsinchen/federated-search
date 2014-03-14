@@ -12,16 +12,20 @@ margin-left: 150px;
 margin-right: 150px;
 }
 
-.image_div, .form_div
+.image_div
 {
-width: 400px;
-height: 100px;
+width: 420px;
+height: 80px;
 float: left;
 }
 
 .form_div
 {
+width: 320px;
+height: 60px;
+padding-left: 100px;
 margin-top: 20px;
+float: left;
 }
 
 .bottom
@@ -49,12 +53,15 @@ float: left;
 
 .aut_result_div
 {
-width: 200px;
+width: 190px;
+border-left: solid 1px #ccc;
 float: left;
 }
 
 .text_div
 {
+border-bottom: solid 1px #ccc;
+margin-left: 5px;
 padding: 15px;
 }
 
