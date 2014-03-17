@@ -7,9 +7,9 @@ margin-left: 475px;
 
 .content_div
 {
-width: 900px;
-margin-left: 150px;
-margin-right: 150px;
+width: 1000px;
+margin-left: 100px;
+margin-right: 100px;
 }
 
 .image_div
@@ -33,37 +33,29 @@ float: left;
 margin-bottom: 0;
 }
 
-.doc_subtitle_div
-{
-width: 650px;
-float: left;
-}
-
-.aut_subtitle_div
-{
-width: 200px;
-float: left;
-}
-
 .doc_result_div
 {
-width: 650px;
+width: 630px;
 float: left;
 padding-left: 5px;
 }
 
 .aut_result_div
 {
-width: 220px;
+width: 350px;
 border-left: solid 1px #ccc;
 float: left;
 }
 
-.text_div
+.text_div, .aut_text_div
 {
-border-bottom: solid 1px #ccc;
 margin-left: 5px;
 padding: 15px;
+}
+
+.aut_text_div
+{
+border-bottom: solid 1px #ccc;
 }
 
 .result_div

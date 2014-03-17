@@ -65,7 +65,6 @@ class result:
         s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
         info['Homepage'] = s
         html.append(info)
-        print info
     return self.render.result(rss, html)
 
 class css:
