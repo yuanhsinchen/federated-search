@@ -44,6 +44,8 @@ class result:
     for entr in rss.entries:
         entr.title = entr.title.replace("<em>", " ")
         entr.title = entr.title.replace("</em>", " ")
+        entr.description = entr.description.replace("<em>", " ")
+        entr.description = entr.description.replace("</em>", " ")
 
     #query to CiteSeerx Author
     #s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
