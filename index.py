@@ -46,24 +46,26 @@ class result:
         entr.title = entr.title.replace("</em>", " ")
 
     #query to CiteSeerx Author
-    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
+    #s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
+    #query to CSSeer
+    s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + query
     doc = lxml.html.parse(s)
     html = []
-    for node in doc.xpath("//div[@class='result']"):
+    for node in doc.xpath("//div[@class='blockhighlight_box']"):
         info = {}
         s = 'http://citeseerx.ist.psu.edu'
-        s += ''.join((node.xpath("h3/a/@href")))
+        s += ''.join((node.xpath("ul/li/a/@href")))
         info['href'] = s
-        s = ''.join(node.xpath("h3/a/text()"))
+        s = ''.join(node.xpath("ul/li/a/text()"))
         info['name'] = s
-        s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Variations')]/td[2]/text()"))
-        info['Variations'] = s
-        s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Affiliations')]/td[2]/text()"))
+        #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Variations')]/td[2]/text()"))
+        #info['Variations'] = s
+        s =''.join(node.xpath("ul/li[2]/text()"))
         info['Affiliations'] = s
-        s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Papers')]/td[2]/text()"))
-        info['Papers'] = s
-        s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
-        info['Homepage'] = s
+        #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Papers')]/td[2]/text()"))
+        #info['Papers'] = s
+        #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
+        #info['Homepage'] = s
         html.append(info)
     return self.render.result(rss, html)
 

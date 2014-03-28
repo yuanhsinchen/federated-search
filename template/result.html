@@ -45,15 +45,15 @@ $for l in html:
                 <tr><td>Affiliations</td>
                 <td>$l['Affiliations']</td></tr>
 
-            $if l['Variations'] != '':
-                <tr><td>Variations</td>
-                <td>$l['Variations']</td></tr>
-            $if l['Papers'] != '':
-                <tr><td>Papers</td>
-                <td>$l['Papers']</td></tr>
-            $if l['Homepage'] != '':
-                <tr><td>Homepage</td>
-                <td><a href=$l['Homepage']>$l['Homepage']</a></td></tr>
+            $#$if l['Variations'] != '':
+            $#    <tr><td>Variations</td>
+            $#    <td>$l['Variations']</td></tr>
+            $#if l['Papers'] != '':
+            $#    <tr><td>Papers</td>
+            $#    <td>$l['Papers']</td></tr>
+            $#if l['Homepage'] != '':
+            $#    <tr><td>Homepage</td>
+            $#    <td><a href=$l['Homepage']>$l['Homepage']</a></td></tr>
         </table>
     </div>
 </div>
