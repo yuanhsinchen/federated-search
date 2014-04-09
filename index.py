@@ -55,15 +55,12 @@ class result:
     html = []
     for node in doc.xpath("//div[@class='blockhighlight_box']"):
         info = {}
-        s = 'http://citeseerx.ist.psu.edu'
-        s += ''.join((node.xpath("ul/li/a/@href")))
-        info['href'] = s
-        s = ''.join(node.xpath("ul/li/a/text()"))
-        info['name'] = s
+        au_url = 'http://csseer.ist.psu.edu/experts/'
+        info['href'] = au_url + ''.join((node.xpath("ul/li/a/@href")))
+        info['name'] = ''.join(node.xpath("ul/li/a/text()"))
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Variations')]/td[2]/text()"))
         #info['Variations'] = s
-        s =''.join(node.xpath("ul/li[2]/text()"))
-        info['Affiliations'] = s
+        info['Affiliations'] = ''.join(node.xpath("ul/li[2]/text()"))
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Papers')]/td[2]/text()"))
         #info['Papers'] = s
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
