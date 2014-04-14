@@ -1,4 +1,4 @@
-$def with (rss, html)
+$def with (citeseerx, html)
 <!DOCTYPE html>
 <html>
 <head>
@@ -30,7 +30,7 @@ $def with (rss, html)
 <div class="aut_subtitle_div"><h2>Author</h2></div>
 </div>-->
 <div class="doc_result_div">
-$for entr in rss.entries:
+$for entr in citeseerx.entries:
   <div class="text_div"><h4><a href=$entr.link>$entr.title</a></h4>
        <!--$entr.link<br>-->
        $entr.description
@@ -39,7 +39,7 @@ $for entr in rss.entries:
 
 <div class="aut_result_div">
 $for l in html:
-    <div class="aut_text_div"><h4><a href=$l['href']>$l['name']</a></h4>
+    <div class="aut_text_div"><h4><a href=$l['href']>$l['author']</a></h4>
         <table>
             $if l['Affiliations'] != '':
                 <tr><td>Affiliations</td>
