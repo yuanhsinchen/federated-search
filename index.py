@@ -48,25 +48,6 @@ class result:
         entr.description = entr.description.replace("<em>", " ")
         entr.description = entr.description.replace("</em>", " ")
     """
-    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
-    citeseerx = lxml.html.parse(s)
-    result_div = citeseerx.xpath("//div[@class='result']")
-    citeseerx_result = []
-    for div in result_div:
-        info = {}
-        info['href'] = div.xpath("h3/a/@href")
-        #title = div.xpath("h3/a//text()").strip().replace('<em>', '').replace('</em>', '').replace('\n', '')
-        title = div.xpath("h3/a//text()")
-        title = [s.strip() for s in title]
-        title = ' '.join(title)
-        info['title'] = title
-        author = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
-        info['author'] = author.replace('\n', '').replace('by', '').strip().split(',')
-        citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
-        citeseerx_result.append(info)
-    print citeseerx_result
-    #query to CiteSeerx Author
-    #s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
     #query to CSSeer
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + query
     doc = lxml.html.parse(s)
@@ -84,7 +65,43 @@ class result:
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
         #info['Homepage'] = s
         html.append(info)
-    #return self.render.result(citeseerx, html)
+    #print html
+
+    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
+    citeseerx = lxml.html.parse(s)
+    result_div = citeseerx.xpath("//div[@class='result']")
+    citeseerx_result = []
+    for div in result_div:
+        info = {}
+        info['href'] = div.xpath("h3/a/@href")
+        #title = div.xpath("h3/a//text()").strip().replace('<em>', '').replace('</em>', '').replace('\n', '')
+        title = div.xpath("h3/a//text()")
+        title = [s.strip() for s in title]
+        title = ' '.join(title)
+        info['title'] = title
+        author = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
+        author = author.replace('\n', '').replace('by', '').strip().split(',')
+        info['author'] = author
+        #for a in html:
+        #    print a['author']
+        author_info = []
+        for aut in author:
+            aut = aut.strip()
+            #print aut
+            for a in html:
+                if aut == a['author']:
+                #if aut == (a['author'] for a in html):
+                    #print a['author'] + '\n'
+                    author_info.append(a)
+        info['author_info'] = author_info
+        citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
+        info['citedby'] = citedby.replace('Cited by', '')
+        citeseerx_result.append(info)
+    #print citeseerx_result[3]
+    #query to CiteSeerx Author
+    #s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
+    print citeseerx_result
+    return self.render.result(citeseerx_result, html)
 
 class css:
     def GET(self): raise web.seeother("/static/inputcss.css")

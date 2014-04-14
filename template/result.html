@@ -30,10 +30,20 @@ $def with (citeseerx, html)
 <div class="aut_subtitle_div"><h2>Author</h2></div>
 </div>-->
 <div class="doc_result_div">
-$for entr in citeseerx.entries:
-  <div class="text_div"><h4><a href=$entr.link>$entr.title</a></h4>
-       <!--$entr.link<br>-->
-       $entr.description
+$for r in citeseerx:
+  <div class="text_div"><h4><a href=$r['href']>$r['title']</a></h4>
+        <table>
+            $if r['author_info'] != []:
+                $for a in r['author_info']:
+                    <tr><td>By</td><td><a href=$a['href']>$a['author']</a></td></tr>
+                    <tr><td></td><td>$a['Affiliations']</td></tr>
+            $else:
+                <tr><td>By</td>
+                $for a in r['author']:
+                    <td>$a, </td>
+                </tr>
+            <tr><td>Cited by </td><td>$r['citedby']</td></tr>
+       </table>
   </div>
 </div>
 
