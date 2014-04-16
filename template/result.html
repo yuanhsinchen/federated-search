@@ -3,12 +3,11 @@ $def with (citeseerx, html)
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="/static/inputcss.css" />
+<script type="text/javascript" src="/static/citeseer.js"></script>
 </head>
 
 <body>
-
-<div class="content_div">
-
+<div class="result_div">
 <div class="image_div">
 <img src="/static/citeseer.png" />
 </div>
@@ -19,8 +18,10 @@ $def with (citeseerx, html)
 <input type="submit" value="Search">
 </form>
 </div>
+</div>
 
-<div class="result_div">Results</div>
+<div class="content_div">
+
 <!--<div>
 <h1 class="bottom">Search Result</h1> </div>
 </div>
@@ -42,12 +43,19 @@ $for r in citeseerx:
                 $for a in r['author']:
                     <td>$a, </td>
                 </tr>
-            <tr><td>Cited by </td><td>$r['citedby']</td></tr>
        </table>
+       <table>
+            <tr class="citedby"><td>Cited by </td><td>$r['citedby']</td></tr>
+        </table>
+           <!--<table><tr><td><a class="abstract_toggle">Abstract</a></td></tr>
+            </table>-->
+        <div class="pubabstract">
+            $r['abstract']
+        </div>
   </div>
 </div>
 
-<div class="aut_result_div">
+<div class="aut_result_div"><h2 class="expert_font">Experts</h2>
 $for l in html:
     <div class="aut_text_div"><h4><a href=$l['href']>$l['author']</a></h4>
         <table>

@@ -7,9 +7,18 @@ margin-left: 475px;
 
 .content_div
 {
+border-top: solid 1px #ccc;
 width: 1000px;
 margin-left: 100px;
+margin-top: 20px;
 margin-right: 100px;
+}
+
+.result_div
+{
+height: 50px;
+background-color: #ececec;
+padding: 4px;
 }
 
 .image_div
@@ -17,13 +26,14 @@ margin-right: 100px;
 width: 420px;
 height: 80px;
 float: left;
+#margin-left: 200px;
 }
 
 .form_div
 {
 width: 320px;
 height: 60px;
-padding-left: 120px;
+#padding-left: 120px;
 margin-top: 20px;
 float: left;
 }
@@ -55,12 +65,34 @@ padding: 15px;
 
 .aut_text_div
 {
-border-bottom: solid 1px #ccc;
+border-top: solid 1px #ccc;
+border-right: solid 1px #ccc;
 }
 
-.result_div
+
+.abstract_toggle
 {
-clear: both;
-background-color: #ececec;
-padding: 4px;
+cursor: pointer;
+}
+
+.pubabstract
+{
+border: 1px solid #bbb;
+background: #eee;
+margin-top: 8px;
+padding: 8px;
+#display: none;
+color: #333;
+}
+
+.citedby
+{
+font-size: small;
+}
+
+.expert_font
+{
+font-size:x-large;
+color:#aaa;
+padding:5px;
 }

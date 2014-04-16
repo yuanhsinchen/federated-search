@@ -55,7 +55,7 @@ class result:
     for node in doc.xpath("//div[@class='blockhighlight_box']"):
         info = {}
         au_url = 'http://csseer.ist.psu.edu/experts/'
-        info['href'] = au_url + ''.join((node.xpath("ul/li/a/@href")))
+        info['href'] = au_url + ''.join(node.xpath("ul/li/a/@href"))
         info['author'] = ''.join(node.xpath("ul/li/a/text()"))
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Variations')]/td[2]/text()"))
         #info['Variations'] = s
@@ -73,12 +73,15 @@ class result:
     citeseerx_result = []
     for div in result_div:
         info = {}
-        info['href'] = div.xpath("h3/a/@href")
+        paper_url = 'http://citeseerx.ist.psu.edu'
+        info['href'] = paper_url + ''.join(div.xpath("h3/a/@href"))
         #title = div.xpath("h3/a//text()").strip().replace('<em>', '').replace('</em>', '').replace('\n', '')
         title = div.xpath("h3/a//text()")
         title = [s.strip() for s in title]
         title = ' '.join(title)
         info['title'] = title
+        abstract = ''.join(div.xpath("div[@class='pubextras']/div[@class='pubabstract']/text()")).strip().replace('<em>','').replace('</em>', '').replace('\n', '')
+        info['abstract'] = abstract
         author = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
         author = author.replace('\n', '').replace('by', '').strip().split(',')
         info['author'] = author
