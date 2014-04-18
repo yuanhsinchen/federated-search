@@ -104,7 +104,7 @@ class result:
                     #print a['author'] + '\n'
                     author_info.append(a)
                     info['score'] += a['score']
-                    html.remove(a)
+                    #html.remove(a)
         info['author_info'] = author_info
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
         info['citedby'] = citedby.replace('Cited by', '')
@@ -114,8 +114,8 @@ class result:
     for n in citeseerx_result:
        n['score'] += float(cscore / clen)
        cscore -= 1
-    citeseerx_result = sorted(citeseerx_result, key=itemgetter('author_info', 'score'), reverse=True)
-    html = [x for x in html if x['score'] > 0.85]
+    citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
+    html = [x for x in html if x['score'] > 0.9]
 #    for n in html:
 #        #if n['score'] < 0.5:
 #        if n['author'] != '':
