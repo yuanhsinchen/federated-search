@@ -11,6 +11,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *  
 from PyQt4.QtWebKit import *
 import sys
+from operator import itemgetter
 
 urls = (
 	'/', 'index',
@@ -52,6 +53,7 @@ class result:
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + query
     doc = lxml.html.parse(s)
     html = []
+    csscore = 0
     for node in doc.xpath("//div[@class='blockhighlight_box']"):
         info = {}
         au_url = 'http://csseer.ist.psu.edu/experts/'
@@ -65,12 +67,16 @@ class result:
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
         #info['Homepage'] = s
         html.append(info)
-    #print html
+    nlen = len(html)
+    for n in html:
+        n['score'] = nlen
+        nlen -= 1
 
     s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
     result_div = citeseerx.xpath("//div[@class='result']")
     citeseerx_result = []
+    cscore = 0
     for div in result_div:
         info = {}
         paper_url = 'http://citeseerx.ist.psu.edu'
@@ -87,6 +93,7 @@ class result:
         info['author'] = author
         #for a in html:
         #    print a['author']
+        info['score'] = 0
         author_info = []
         for aut in author:
             aut = aut.strip()
@@ -96,13 +103,16 @@ class result:
                 #if aut == (a['author'] for a in html):
                     #print a['author'] + '\n'
                     author_info.append(a)
+                    info['score'] += a['score']
         info['author_info'] = author_info
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
         info['citedby'] = citedby.replace('Cited by', '')
         citeseerx_result.append(info)
-    #print citeseerx_result[3]
-    #query to CiteSeerx Author
-    #s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&uauth=1&sort=ndocs&t=auth"
+    clen = len(citeseerx_result)
+    for n in citeseerx_result:
+       n['score'] += clen
+       clen -= 1
+    citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
     print citeseerx_result
     return self.render.result(citeseerx_result, html)
 
