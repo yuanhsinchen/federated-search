@@ -53,7 +53,6 @@ class result:
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + query
     doc = lxml.html.parse(s)
     html = []
-    csscore = 0
     for node in doc.xpath("//div[@class='blockhighlight_box']"):
         info = {}
         au_url = 'http://csseer.ist.psu.edu/experts/'
@@ -67,16 +66,16 @@ class result:
         #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
         #info['Homepage'] = s
         html.append(info)
-    nlen = len(html)
+    cslen = float(len(html))
+    csscore = cslen
     for n in html:
-        n['score'] = nlen
-        nlen -= 1
+        n['score'] = csscore / cslen
+        csscore -= 1
 
     s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
     result_div = citeseerx.xpath("//div[@class='result']")
     citeseerx_result = []
-    cscore = 0
     for div in result_div:
         info = {}
         paper_url = 'http://citeseerx.ist.psu.edu'
@@ -93,7 +92,7 @@ class result:
         info['author'] = author
         #for a in html:
         #    print a['author']
-        info['score'] = 0
+        info['score'] = 0.0
         author_info = []
         for aut in author:
             aut = aut.strip()
@@ -108,12 +107,13 @@ class result:
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
         info['citedby'] = citedby.replace('Cited by', '')
         citeseerx_result.append(info)
-    clen = len(citeseerx_result)
+    clen = float(len(citeseerx_result))
+    cscore = clen
     for n in citeseerx_result:
-       n['score'] += clen
-       clen -= 1
+       n['score'] += float(cscore / clen)
+       cscore -= 1
     citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
-    print citeseerx_result
+    #print citeseerx_result
     return self.render.result(citeseerx_result, html)
 
 class css:
