@@ -114,6 +114,12 @@ class result:
        n['score'] += float(cscore / clen)
        cscore -= 1
     citeseerx_result = sorted(citeseerx_result, key=itemgetter('author_info', 'score'), reverse=True)
+    html = [x for x in html if x['score'] > 0.7]
+#    for n in html:
+#        #if n['score'] < 0.5:
+#        if n['author'] != '':
+#            html.remove(n)
+    print html
     #print citeseerx_result
     return self.render.result(citeseerx_result, html)
 

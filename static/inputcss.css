@@ -53,7 +53,7 @@ padding-left: 5px;
 .aut_result_div
 {
 width: 350px;
-border-left: solid 1px #ccc;
+border-left: solid 2px #ccc;
 float: left;
 }
 
@@ -66,10 +66,15 @@ padding: 15px;
 .aut_text_div
 {
 border-top: solid 1px #ccc;
-border-right: solid 1px #ccc;
+border-bottom: solid 1px #ccc;
+border-right: solid 2px #ccc;
 }
 
-
+.abs_color
+{
+color: #19af19;
+font-size: small;
+}
 .abstract_toggle
 {
 cursor: pointer;
@@ -93,6 +98,6 @@ font-size: small;
 .expert_font
 {
 font-size:x-large;
-color:#aaa;
+color:#999;
 padding:5px;
 }
