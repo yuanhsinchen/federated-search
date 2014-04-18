@@ -37,7 +37,8 @@ class result:
 
   def GET(self, name=None):
     i = web.input(query=None)
-    query = i.query.replace(" ", "+")
+    query = i.query
+    rquery = query.replace(" ", "+")
 
     #query to CiteSeerx
     """
@@ -50,7 +51,7 @@ class result:
         entr.description = entr.description.replace("</em>", " ")
     """
     #query to CSSeer
-    s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + query
+    s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
     doc = lxml.html.parse(s)
     html = []
     for node in doc.xpath("//div[@class='blockhighlight_box']"):
@@ -72,7 +73,7 @@ class result:
         n['score'] = csscore / cslen
         csscore -= 1
 
-    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
+    s = "http://citeseerx.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
     result_div = citeseerx.xpath("//div[@class='result']")
     citeseerx_result = []
@@ -114,14 +115,15 @@ class result:
        n['score'] += float(cscore / clen)
        cscore -= 1
     citeseerx_result = sorted(citeseerx_result, key=itemgetter('author_info', 'score'), reverse=True)
-    html = [x for x in html if x['score'] > 0.7]
+    html = [x for x in html if x['score'] > 0.85]
 #    for n in html:
 #        #if n['score'] < 0.5:
 #        if n['author'] != '':
 #            html.remove(n)
     print html
     #print citeseerx_result
-    return self.render.result(citeseerx_result, html)
+    print query
+    return self.render.result(citeseerx_result, html, query)
 
 class css:
     def GET(self): raise web.seeother("/static/inputcss.css")

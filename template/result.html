@@ -1,4 +1,4 @@
-$def with (citeseerx, html)
+$def with (citeseerx, html, query)
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,7 +15,7 @@ $def with (citeseerx, html)
 
 <div class="form_div">
 <form name="input" method="get" action="/result">
-<input type="text" name="query" value="">
+<input type="text" name="query" value=$query>
 <input type="submit" value="Search">
 </form>
 </div>
@@ -31,14 +31,14 @@ $def with (citeseerx, html)
 <div class="doc_subtitle_div"><h2>Keyword</h2></div>
 <div class="aut_subtitle_div"><h2>Author</h2></div>
 </div>-->
-<div class="doc_result_div">
+<div class="doc_result_div"><a class="field_font">Publications</a>
 $for r in citeseerx:
   <div class="text_div"><a href=$r['href']>$r['title']</a> <a class='citedby'> [Citation: $r['citedby']]</a>
-   <p class="abstract_toggle"> By 
+   <div class="abstract_toggle"> By 
     $for a in r['author']:
         $a,
     <a class="abs_color">Abstract</a>
-    </p>
+    </div>
     <div class="pubabstract">
         $r['abstract']
     </div>
@@ -51,7 +51,8 @@ $for r in citeseerx:
   </div>
 </div>
 
-<div class="aut_result_div"><h2 class="expert_font">Experts</h2>
+<div class="aut_result_div"><a class="field_font">Experts</a>
+<br><br>
 $for l in html:
     <div class="aut_text_div">
     <table>
