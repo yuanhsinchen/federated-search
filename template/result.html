@@ -23,14 +23,6 @@ $def with (citeseerx, html, query)
 
 <div class="content_div">
 
-<!--<div>
-<h1 class="bottom">Search Result</h1> </div>
-</div>
-
-<div id="subtitle">
-<div class="doc_subtitle_div"><h2>Keyword</h2></div>
-<div class="aut_subtitle_div"><h2>Author</h2></div>
-</div>-->
 <div class="doc_result_div"><a class="field_font">Publications</a>
 $for r in citeseerx:
   <div class="text_div"><a href=$r['href']>$r['title']</a> <a class='citedby'> [Citation: $r['citedby']]</a>

@@ -40,16 +40,6 @@ class result:
     query = i.query
     rquery = query.replace(" ", "+")
 
-    #query to CiteSeerx
-    """
-    s = "http://citeseerx.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc&feed=rss"
-    rss = feedparser.parse(s)
-    for entr in rss.entries:
-        entr.title = entr.title.replace("<em>", " ")
-        entr.title = entr.title.replace("</em>", " ")
-        entr.description = entr.description.replace("<em>", " ")
-        entr.description = entr.description.replace("</em>", " ")
-    """
     #query to CSSeer
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
     doc = lxml.html.parse(s)
@@ -59,13 +49,7 @@ class result:
         au_url = 'http://csseer.ist.psu.edu/experts/'
         info['href'] = au_url + ''.join(node.xpath("ul/li/a/@href"))
         info['author'] = ''.join(node.xpath("ul/li/a/text()"))
-        #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Variations')]/td[2]/text()"))
-        #info['Variations'] = s
         info['Affiliations'] = ''.join(node.xpath("ul/li[2]/text()"))
-        #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Papers')]/td[2]/text()"))
-        #info['Papers'] = s
-        #s = ''.join(node.xpath("table[@class='authInfo']/tr[contains(.,'Homepage')]/td[2]/a/@href"))
-        #info['Homepage'] = s
         html.append(info)
     cslen = float(len(html))
     csscore = cslen
@@ -73,6 +57,7 @@ class result:
         n['score'] = csscore / cslen
         csscore -= 1
 
+    #query to CiteSeerx
     s = "http://citeseerx.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
     result_div = citeseerx.xpath("//div[@class='result']")
@@ -81,7 +66,6 @@ class result:
         info = {}
         paper_url = 'http://citeseerx.ist.psu.edu'
         info['href'] = paper_url + ''.join(div.xpath("h3/a/@href"))
-        #title = div.xpath("h3/a//text()").strip().replace('<em>', '').replace('</em>', '').replace('\n', '')
         title = div.xpath("h3/a//text()")
         title = [s.strip() for s in title]
         title = ' '.join(title)
@@ -91,20 +75,22 @@ class result:
         author = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
         author = author.replace('\n', '').replace('by', '').strip().split(',')
         info['author'] = author
-        #for a in html:
-        #    print a['author']
         info['score'] = 0.0
         author_info = []
+        acnt = 0
+        ascor = 0.0
+        c = 0
         for aut in author:
             aut = aut.strip()
-            #print aut
             for a in html:
                 if aut == a['author']:
-                #if aut == (a['author'] for a in html):
-                    #print a['author'] + '\n'
+                    acnt += 1
+                    c += 1 / acnt
                     author_info.append(a)
-                    info['score'] += a['score']
-                    #html.remove(a)
+                    ascor += a['score'] * 1 / acnt
+        if c > 0:
+            info['score'] += ascor * 1 / (2 * c)
+        print info['score']
         info['author_info'] = author_info
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
         info['citedby'] = citedby.replace('Cited by', '')
@@ -112,17 +98,13 @@ class result:
     clen = float(len(citeseerx_result))
     cscore = clen
     for n in citeseerx_result:
-       n['score'] += float(cscore / clen)
+       print "citeseer_before " + str(n['score'])
+       n['score'] += cscore / clen
        cscore -= 1
+       print "citeseer " + str(n['score'])
     citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
-    html = [x for x in html if x['score'] > 0.9]
-#    for n in html:
-#        #if n['score'] < 0.5:
-#        if n['author'] != '':
-#            html.remove(n)
-    print html
+    html = [x for x in html if x['score'] > 0.8]
     #print citeseerx_result
-    print query
     return self.render.result(citeseerx_result, html, query)
 
 class css:
