@@ -12,33 +12,17 @@ from PyQt4.QtCore import *
 from PyQt4.QtWebKit import *
 import sys
 from operator import itemgetter
+import json
 
-urls = (
-	'/', 'index',
-	'/result', 'result',
-        '/static/inputcss.css', 'css',
-	)
 
-app = web.application(urls, globals())
-
-class index:
-  def __init__(self):
-    self.render = web.template.render('template')
-
-  def GET(self, name=None):
-    return self.render.input("a")
-
-  def POST(self, name):
-    return "post"
-
-class result:
-  def __init__(self):
-    self.render = web.template.render('template')
-
-  def GET(self, name=None):
-    i = web.input(query=None)
-    query = i.query
-    rquery = query.replace(" ", "+")
+def main():
+    print sys.argv
+    query = ''
+    for q in range(1, len(sys.argv) - 1):
+        query += sys.argv[q] + '+'
+    query += sys.argv[len(sys.argv) - 1]
+    print query
+    rquery = query
 
     #query to CSSeer
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
@@ -90,7 +74,6 @@ class result:
                     ascor += a['score'] * 1 / acnt
         if c > 0:
             info['score'] += ascor * 1 / (2 * c)
-        print info['score']
         info['author_info'] = author_info
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
         info['citedby'] = citedby.replace('Cited by', '')
@@ -98,16 +81,15 @@ class result:
     clen = float(len(citeseerx_result))
     cscore = clen
     for n in citeseerx_result:
-       print "citeseer_before " + str(n['score'])
        n['score'] += cscore / clen
        cscore -= 1
-       print "citeseer " + str(n['score'])
     citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
     html = [x for x in html if x['score'] > 0.8]
-    #print citeseerx_result
-    return self.render.result(citeseerx_result, html, query)
+    j = json.dumps(citeseerx_result)
+    outfile = open('citeseerx.json', 'w')
+    #with open('citeseerx.json', 'w') as outfile:
+    #    json.dump(j, outfile)
+    print >> outfile, j
 
-class css:
-    def GET(self): raise web.seeother("/static/inputcss.css")
 if __name__ == "__main__":
-  app.run()
+    main()
