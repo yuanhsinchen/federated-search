@@ -15,16 +15,17 @@ from PyQt4.QtWebKit import *
 import sys
 from operator import itemgetter
 import json
-
+import re
 
 def main():
-    print sys.argv
+    #print sys.argv
     query = ''
     for q in range(1, len(sys.argv) - 1):
         query += sys.argv[q] + '+'
+
     query += sys.argv[len(sys.argv) - 1]
-    print query
-    rquery = query
+    #print query
+    rquery = query.replace('+', ' ')
 
     #query to CSSeer
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
@@ -42,22 +43,31 @@ def main():
     for n in html:
         n['score'] = csscore / cslen
         csscore -= 1
-
     #query to CiteSeerx
     s = "http://citeseerx.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
+    result_info = citeseerx.xpath("//div[@id='result_info']/strong/text()")
+    numFound = int(result_info[1].replace(',', ''))
     result_div = citeseerx.xpath("//div[@class='result']")
     citeseerx_result = []
     for div in result_div:
         info = {}
+        href = div.xpath("h3/a/@href")
         paper_url = 'http://citeseerx.ist.psu.edu'
-        info['href'] = paper_url + ''.join(div.xpath("h3/a/@href"))
+        info['href'] = paper_url + ''.join(href)
+        doi = re.search(r"\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}", ''.join(href))
+        if doi:
+            info['doi'] = doi.group()
+        else:
+            info['doi'] = ''
         title = div.xpath("h3/a//text()")
         title = [s.strip() for s in title]
         title = ' '.join(title)
         info['title'] = title
         abstract = ''.join(div.xpath("div[@class='pubextras']/div[@class='pubabstract']/text()")).strip().replace('<em>','').replace('</em>', '').replace('\n', '')
         info['abstract'] = abstract
+        rid = ''.join(div.xpath("div[@class='pubextras']/span/@id")).strip().replace('cmsg_', '')
+        info['id'] = rid
         author = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
         author = author.replace('\n', '').replace('by', '').strip().split(',')
         info['author'] = author
@@ -78,7 +88,11 @@ def main():
             info['score'] += ascor * 1 / (2 * c)
         info['author_info'] = author_info
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
-        info['citedby'] = citedby.replace('Cited by', '')
+        ncites = re.search(r"(\d+) \((\d+)", citedby).group(1)
+        scites = re.search(r"(\d+) \((\d+)", citedby).group(2)
+        info['ncites'] = int(ncites)
+        info['scites'] = int(scites)
+        info['incol'] = True
         citeseerx_result.append(info)
     clen = float(len(citeseerx_result))
     cscore = clen
@@ -87,11 +101,32 @@ def main():
        cscore -= 1
     citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
     html = [x for x in html if x['score'] > 0.8]
-    j = json.dumps(citeseerx_result)
-    outfile = open('citeseerx.json', 'w')
+    #j = json.dumps(citeseerx_result)
+    j = json.dumps(csxjson(citeseerx_result, rquery, numFound))
+    #outfile = open('citeseerx.json', 'w')
     #with open('citeseerx.json', 'w') as outfile:
     #    json.dump(j, outfile)
-    print >> outfile, j
+    #print >> outfile, j
+    #print len(j)
+    print j
+
+def csxjson(citeseerx_result, query, numFound):
+    csx = {}
+    response = {"start":0, "docs":citeseerx_result, "numFound":numFound}
+    csx["response"] = response
+
+    params = {}
+    params["start"] = 0
+    params["q"] = query
+    params["wt"] = "json"
+    params["qt"] = "dismax"
+    params["fq"] = "incol:true"
+    params["hl"] = "true"
+    params["row"] = "10"
+    responseHeader = {"status":0, "QTime":23, "params":params}
+    csx["responseHeader"] = responseHeader
+    #csxl = [csx]
+    return csx
 
 if __name__ == "__main__":
     main()
