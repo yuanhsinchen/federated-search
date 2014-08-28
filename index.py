@@ -9,8 +9,8 @@ import xpath
 import HTMLParser
 from bs4 import BeautifulSoup
 import lxml.html
-from PyQt4.QtGui import *  
-from PyQt4.QtCore import *  
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
 from PyQt4.QtWebKit import *
 import sys
 from operator import itemgetter
@@ -50,7 +50,7 @@ def main():
     numFound = int(result_info[1].replace(',', ''))
     result_div = citeseerx.xpath("//div[@class='result']")
     citeseerx_result = []
-    for div in result_div:
+    for orank,div in enumerate(result_div, 1):
         info = {}
         href = div.xpath("h3/a/@href")
         paper_url = 'http://citeseerx.ist.psu.edu'
@@ -60,6 +60,7 @@ def main():
             info['doi'] = doi.group()
         else:
             info['doi'] = ''
+        info['doi'] = info['doi'] + '&or=' + str(orank)
         title = div.xpath("h3/a//text()")
         title = [s.strip() for s in title]
         title = ' '.join(title)
@@ -76,6 +77,7 @@ def main():
         acnt = 0
         ascor = 0.0
         c = 0
+        exp = False
         for aut in author:
             aut = aut.strip()
             for a in html:
@@ -84,12 +86,21 @@ def main():
                     c += 1 / acnt
                     author_info.append(a)
                     ascor += a['score'] * 1 / acnt
+                    exp = True
+            if exp == False:
+                ai = {'author':aut}
+                author_info.append(ai)
+            exp = False
         if c > 0:
             info['score'] += ascor * 1 / (2 * c)
         info['author_info'] = author_info
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
-        ncites = re.search(r"(\d+) \((\d+)", citedby).group(1)
-        scites = re.search(r"(\d+) \((\d+)", citedby).group(2)
+        cites = re.search(r"(\d+) \((\d+)", citedby)
+        ncites = 0
+        scites = 0
+        if cites:
+            ncites = re.search(r"(\d+) \((\d+)", citedby).group(1)
+            scites = re.search(r"(\d+) \((\d+)", citedby).group(2)
         info['ncites'] = int(ncites)
         info['scites'] = int(scites)
         info['incol'] = True
