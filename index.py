@@ -7,11 +7,7 @@ import feedparser
 import xml.etree.ElementTree as ET
 import xpath
 import HTMLParser
-from bs4 import BeautifulSoup
 import lxml.html
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-from PyQt4.QtWebKit import *
 import sys
 from operator import itemgetter
 import json
