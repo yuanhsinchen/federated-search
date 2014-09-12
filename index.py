@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import xpath
 import HTMLParser
 import lxml.html
+import socket
 import sys
 from operator import itemgetter
 import json
@@ -26,6 +27,8 @@ def main():
     #query to CSSeer
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
     doc = lxml.html.parse(s)
+    timeout = 1000
+    socket.setdefaulttimeout(timeout)
     html = []
     for node in doc.xpath("//div[@class='blockhighlight_box']"):
         info = {}
