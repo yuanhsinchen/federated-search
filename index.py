@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python26
 
 import web
 import urllib
@@ -40,7 +40,7 @@ def main():
         n['score'] = csscore / cslen
         csscore -= 1
     #query to CiteSeerx
-    s = "http://citeseerx.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
+    s = "http://csxweb01.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
     result_info = citeseerx.xpath("//div[@id='result_info']/strong/text()")
     numFound = int(result_info[1].replace(',', ''))
@@ -49,7 +49,7 @@ def main():
     for orank,div in enumerate(result_div, 1):
         info = {}
         href = div.xpath("h3/a/@href")
-        paper_url = 'http://citeseerx.ist.psu.edu'
+        paper_url = 'http://csxweb01.ist.psu.edu'
         info['href'] = paper_url + ''.join(href)
         doi = re.search(r"\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}", ''.join(href))
         if doi:
