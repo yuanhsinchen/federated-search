@@ -24,80 +24,95 @@ def build_query():
     #print query
     return query.replace('+', ' ')
 
-def query_csseer(rquery):
+def query_csseer(query):
     #query to CSSeer
-    s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
-    doc = lxml.html.parse(s)
+    s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + query
+    htmldoc = lxml.html.parse(s)
     timeout = 1000
     socket.setdefaulttimeout(timeout)
-    html = []
-    for node in doc.xpath("//div[@class='blockhighlight_box']"):
-        info = {}
+
+    cs_authors = []
+    for node in htmldoc.xpath("//div[@class='blockhighlight_box']"):
+        author = {}
         au_url = 'http://csseer.ist.psu.edu/experts/'
-        info['href'] = au_url + ''.join(node.xpath("ul/li/a/@href"))
-        info['author'] = ''.join(node.xpath("ul/li/a/text()"))
-        info['Affiliations'] = ''.join(node.xpath("ul/li[2]/text()"))
-        html.append(info)
-    cslen = float(len(html))
+        author['href'] = au_url + ''.join(node.xpath("ul/li/a/@href"))
+        author['author'] = ''.join(node.xpath("ul/li/a/text()"))
+        author['Affiliations'] = ''.join(node.xpath("ul/li[2]/text()"))
+        cs_authors.append(author)
+    cslen = float(len(cs_authors))
     csscore = cslen
-    for n in html:
+    for n in cs_authors:
         n['score'] = csscore / cslen
         csscore -= 1
 
-    return html
+    return cs_authors
 
-def query_citeseerx(rquery, html):
+def query_citeseerx(query, cs_authors):
     #query to CiteSeerx
-    s = "http://csxweb01.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
-    citeseerx = lxml.html.parse(s)
-    result_info = citeseerx.xpath("//div[@id='result_info']/strong/text()")
+    s = "http://csxweb01.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
+    htmldoc = lxml.html.parse(s)
+
+    result_info = htmldoc.xpath("//div[@id='result_info']/strong/text()")
     numFound = int(result_info[1].replace(',', ''))
-    result_div = citeseerx.xpath("//div[@class='result']")
-    citeseerx_result = []
+
+    result_div = htmldoc.xpath("//div[@class='result']")
+    docs = []
     for orank,div in enumerate(result_div, 1):
-        info = {}
+        doc = {}
         href = div.xpath("h3/a/@href")
+
         paper_url = 'http://csxweb01.ist.psu.edu'
-        info['href'] = paper_url + ''.join(href)
+        doc['href'] = paper_url + ''.join(href)
+
         doi = re.search(r"\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}", ''.join(href))
         if doi:
-            info['doi'] = doi.group()
+            doc['doi'] = doi.group()
         else:
-            info['doi'] = ''
-        info['doi'] = info['doi'] + '&or=' + str(orank)
+            doc['doi'] = ''
+        doc['doi'] = doc['doi'] + '&or=' + str(orank)
+
         title = div.xpath("h3/a//text()")
         title = [s.strip() for s in title]
         title = ' '.join(title)
-        info['title'] = title
+        doc['title'] = title
+
         abstract = ''.join(div.xpath("div[@class='pubextras']/div[@class='pubabstract']/text()")).strip().replace('<em>','').replace('</em>', '').replace('\n', '')
-        info['abstract'] = abstract
+        doc['abstract'] = abstract
+
         rid = ''.join(div.xpath("div[@class='pubextras']/span/@id")).strip().replace('cmsg_', '')
-        info['id'] = rid
-        author = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
-        author = author.replace('\n', '').replace('by', '').strip().split(',')
-        info['author'] = author
-        info['score'] = 0.0
+        doc['id'] = rid
+
+        authors = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
+        authors = authors.replace('\n', '').replace('by', '').strip().split(',')
+        doc['author'] = authors
+
+        doc['score'] = 0.0
+
         author_info = []
         acnt = 0
-        ascor = 0.0
+        ascore = 0.0
         c = 0
-        exp = False
-        for aut in author:
-            aut = aut.strip()
-            for a in html:
-                if aut == a['author']:
+        for author in authors:
+            found = False
+            author = author.strip()
+            for cs_author in cs_authors:
+                if author == cs_author['author']:
                     acnt += 1
                     c += 1 / acnt
-                    author_info.append(a)
-                    ascor += a['score'] * 1 / acnt
-                    exp = True
-            if exp == False:
-                ai = {'author':aut}
+                    author_info.append(cs_author)
+                    ascore += cs_author['score'] * 1 / acnt
+                    found = True
+                    break
+
+            if not found:
+                ai = {'author':author}
                 author_info.append(ai)
-            exp = False
-        if c > 0:
-            info['score'] += ascor * 1 / (2 * c)
-        info['author_info'] = author_info
+
+        if acnt > 0:
+            doc['score'] += ascore * 1 / (2 * c)
+
+        doc['author_info'] = author_info
+
         citedby = ''.join(div.xpath("div[@class='pubextras']/a[@class='citation remove']/text()"))
         cites = re.search(r"(\d+) \((\d+)", citedby)
         ncites = 0
@@ -105,30 +120,21 @@ def query_citeseerx(rquery, html):
         if cites:
             ncites = re.search(r"(\d+) \((\d+)", citedby).group(1)
             scites = re.search(r"(\d+) \((\d+)", citedby).group(2)
-        info['ncites'] = int(ncites)
-        info['scites'] = int(scites)
-        info['incol'] = True
-        citeseerx_result.append(info)
-    clen = float(len(citeseerx_result))
+        doc['ncites'] = int(ncites)
+        doc['scites'] = int(scites)
+
+        doc['incol'] = True
+        docs.append(doc)
+
+    clen = float(len(docs))
     cscore = clen
-    for n in citeseerx_result:
+    for n in docs:
        n['score'] += cscore / clen
        cscore -= 1
 
-    return numFound, sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
+    return numFound, sorted(docs, key=itemgetter('score'), reverse=True)
 
-def main():
-    rquery = build_query()
-    html = query_csseer(rquery)
-    numFound, citeseerx_result = query_citeseerx(rquery, html)
-
-    print json.dumps(csxjson(citeseerx_result, rquery, numFound))
-
-def csxjson(citeseerx_result, query, numFound):
-    csx = {}
-    response = {"start":0, "docs":citeseerx_result, "numFound":numFound}
-    csx["response"] = response
-
+def build_solr_json(docs, query, numFound):
     params = {}
     params["start"] = 0
     params["q"] = query
@@ -137,10 +143,30 @@ def csxjson(citeseerx_result, query, numFound):
     params["fq"] = "incol:true"
     params["hl"] = "true"
     params["row"] = "10"
-    responseHeader = {"status":0, "QTime":23, "params":params}
-    csx["responseHeader"] = responseHeader
-    #csxl = [csx]
-    return csx
+
+    responseHeader = {}
+    responseHeader["status"] = 0
+    responseHeader["QTime"] = 23
+    responseHeader["params"] = params
+
+    response = {}
+    response["start"] = 0
+    response["docs"] = docs
+    response["numFound"] = numFound
+
+    output = {}
+    output["responseHeader"] = responseHeader
+    output["response"] = response
+
+    return output
+
+def main():
+    query = build_query()
+    cs_authors = query_csseer(query)
+    numFound, docs = query_citeseerx(query, cs_authors)
+
+    output = build_solr_json(docs, query, numFound)
+    print json.dumps(output)
 
 if __name__ == "__main__":
     main()
