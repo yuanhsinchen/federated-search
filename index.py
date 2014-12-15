@@ -1,4 +1,4 @@
-#!/usr/bin/python26
+#! /usr/bin/env python
 
 import web
 import urllib
@@ -14,7 +14,7 @@ from operator import itemgetter
 import json
 import re
 
-def main():
+def build_query():
     #print sys.argv
     query = ''
     for q in range(1, len(sys.argv) - 1):
@@ -22,8 +22,9 @@ def main():
 
     query += sys.argv[len(sys.argv) - 1]
     #print query
-    rquery = query.replace('+', ' ')
+    return query.replace('+', ' ')
 
+def query_csseer(rquery):
     #query to CSSeer
     s = "http://csseer.ist.psu.edu/experts/show?query_type=1&q_term=" + rquery
     doc = lxml.html.parse(s)
@@ -42,6 +43,10 @@ def main():
     for n in html:
         n['score'] = csscore / cslen
         csscore -= 1
+
+    return html
+
+def query_citeseerx(rquery, html):
     #query to CiteSeerx
     s = "http://csxweb01.ist.psu.edu/search?q=" + rquery + "&submit=Search&sort=rlv&t=doc"
     citeseerx = lxml.html.parse(s)
@@ -109,16 +114,15 @@ def main():
     for n in citeseerx_result:
        n['score'] += cscore / clen
        cscore -= 1
-    citeseerx_result = sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
-    html = [x for x in html if x['score'] > 0.8]
-    #j = json.dumps(citeseerx_result)
-    j = json.dumps(csxjson(citeseerx_result, rquery, numFound))
-    #outfile = open('citeseerx.json', 'w')
-    #with open('citeseerx.json', 'w') as outfile:
-    #    json.dump(j, outfile)
-    #print >> outfile, j
-    #print len(j)
-    print j
+
+    return numFound, sorted(citeseerx_result, key=itemgetter('score'), reverse=True)
+
+def main():
+    rquery = build_query()
+    html = query_csseer(rquery)
+    numFound, citeseerx_result = query_citeseerx(rquery, html)
+
+    print json.dumps(csxjson(citeseerx_result, rquery, numFound))
 
 def csxjson(citeseerx_result, query, numFound):
     csx = {}
