@@ -134,7 +134,7 @@ def query_citeseerx(query, cs_authors):
 
     return numFound, sorted(docs, key=itemgetter('score'), reverse=True)
 
-def build_solr_json(docs, query, numFound):
+def build_solr_json(docs, query, numFound, cs_authors):
     params = {}
     params["start"] = 0
     params["q"] = query
@@ -153,6 +153,7 @@ def build_solr_json(docs, query, numFound):
     response["start"] = 0
     response["docs"] = docs
     response["numFound"] = numFound
+    response["experts"] = cs_authors
 
     output = {}
     output["responseHeader"] = responseHeader
@@ -165,7 +166,7 @@ def main():
     cs_authors = query_csseer(query)
     numFound, docs = query_citeseerx(query, cs_authors)
 
-    output = build_solr_json(docs, query, numFound)
+    output = build_solr_json(docs, query, numFound, cs_authors)
     print json.dumps(output)
 
 if __name__ == "__main__":
