@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python26
 
 import web
 import urllib
@@ -49,7 +49,7 @@ def query_csseer(query):
 
 def query_citeseerx(query, cs_authors):
     #query to CiteSeerx
-    s = "http://csxweb01.ist.psu.edu/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
+    s = "http://localhost:8080/search?q=" + query + "&submit=Search&sort=rlv&t=doc"
     htmldoc = lxml.html.parse(s)
 
     result_info = htmldoc.xpath("//div[@id='result_info']/strong/text()")
@@ -61,7 +61,7 @@ def query_citeseerx(query, cs_authors):
         doc = {}
         href = div.xpath("h3/a/@href")
 
-        paper_url = 'http://csxweb01.ist.psu.edu'
+        paper_url = 'http://csxweb04.ist.psu.edu'
         doc['href'] = paper_url + ''.join(href)
 
         doi = re.search(r"\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}\.\d{1,4}", ''.join(href))
@@ -82,8 +82,13 @@ def query_citeseerx(query, cs_authors):
         rid = ''.join(div.xpath("div[@class='pubextras']/span/@id")).strip().replace('cmsg_', '')
         doc['id'] = rid
 
-        authors = ''.join(div.xpath("div[@class='pubinfo']/span[@class='authors']/text()"))
-        authors = authors.replace('\n', '').replace('by', '').strip().split(',')
+        authors = []
+        authors_span = div.xpath("div[@class='authors']/span[@class='author']")
+        for au in authors_span:
+            authors.append(''.join(au.xpath("text()")).strip())
+        kauthors_span = div.xpath("div[@class='authors']/div[@class='kauthors']/span[@class='author']")
+        for au in kauthors_span:
+            authors.append(''.join(au.xpath("text()")).strip())
         doc['author'] = authors
 
         doc['score'] = 0.0
