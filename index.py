@@ -82,6 +82,12 @@ def query_citeseerx(query, cs_authors):
         rid = ''.join(div.xpath("div[@class='pubextras']/span/@id")).strip().replace('cmsg_', '')
         doc['id'] = rid
 
+	if div.xpath("div[@class='pubinfo']/span[@class='pubvenue']/text()"):
+		doc['venue'] = ''.join(div.xpath("div[@class='pubinfo']/span[@class='pubvenue']/text()")).replace('-', '').strip()
+
+	if div.xpath("div[@class='pubinfo']/span[@class='pubyear']/text()"):
+		doc['year'] = int(''.join(div.xpath("div[@class='pubinfo']/span[@class='pubyear']/text()")).replace(',', '').strip())
+
         authors = []
         authors_span = div.xpath("div[@class='authors']/span[@class='author']")
         for au in authors_span:
